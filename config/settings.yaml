@@ -1,0 +1,27 @@
+default:
+  ALLOWED_HOSTS: []
+  AWS_ACCESS_KEY_ID: ""
+  AWS_S3_REGION_NAME: ""
+  AWS_SECRET_ACCESS_KEY: ""
+  AWS_STORAGE_BUCKET_NAME: ""
+
+  DATABASE_URL: ""
+  DEBUG: true
+  SECRET_KEY: ""
+  SITE_ID: 0
+
+development:
+  AWS_S3_REGION_NAME: "us-east-1"
+  SECRET_KEY: ""
+  DEBUG: true
+  SITE_ID: 5
+
+heroku:
+  AWS_S3_REGION_NAME: "us-east-1"
+  ALLOWED_HOSTS:
+    - .online-courses-rest.herokuapp.com
+    - 127.0.0.1
+    - localhost
+  DEBUG: false
+  SITE_ID: 5
+  SECRET_KEY: ""
