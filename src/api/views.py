@@ -5,7 +5,31 @@ from api.serializers import CourseSerializer, LectureSerializer, HomeWorkSeriali
     MarkSerializer, CommentSerializer
 
 
-class CourseViewSet(v.GenericViewSet, m.ListModelMixin, m.CreateModelMixin, m.RetrieveModelMixin,
-                    m.UpdateModelMixin, m.DestroyModelMixin):
+class CourseViewSet(v.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+
+
+class LectureViewSet(v.ModelViewSet):
+    serializer_class = LectureSerializer
+    queryset = Lecture.objects.all()
+
+
+class HomeWorkViewSet(v.ModelViewSet):
+    serializer_class = HomeWorkSerializer
+    queryset = HomeWork.objects.all()
+
+
+class HomeWorkDoneViewSet(v.ModelViewSet):
+    serializer_class = HomeWorkDoneSerializer
+    queryset = HomeWorkDone.objects.all()
+
+
+class MarkViewSet(v.ModelViewSet):
+    serializer_class = MarkSerializer
+    queryset = Mark.objects.all()
+
+
+class CommentViewSet(v.ModelViewSet):
+    serializer_class = CommentSerializer
+    queryset = Comment.objects.all()

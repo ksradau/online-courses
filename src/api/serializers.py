@@ -18,7 +18,7 @@ class UserSerializer(s.ModelSerializer):
 
 
 class CourseSerializer(s.ModelSerializer):
-    user = UserSerializer(many=True)
+    user = UserSerializer(many=True, read_only=True)
 
     class Meta:
         model = Course
@@ -36,23 +36,23 @@ class LectureSerializer(s.ModelSerializer):
 
 class HomeWorkSerializer(s.ModelSerializer):
     class Meta:
-        model = Lecture
+        model = HomeWork
         fields = ['task', 'description', 'lecture']
 
 
 class HomeWorkDoneSerializer(s.ModelSerializer):
     class Meta:
-        model = Lecture
+        model = HomeWorkDone
         fields = ['solution', 'homework', 'student']
 
 
 class MarkSerializer(s.ModelSerializer):
     class Meta:
-        model = Lecture
+        model = Mark
         fields = ['value', 'homework_done', 'teacher']
 
 
 class CommentSerializer(s.ModelSerializer):
     class Meta:
-        model = Lecture
+        model = Comment
         fields = ['text', 'mark', 'teacher']

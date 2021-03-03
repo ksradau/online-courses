@@ -1,6 +1,6 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include, re_path
-from api.views import CourseViewSet
+from api import views as v
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework.permissions import IsAuthenticated
@@ -18,7 +18,12 @@ schema_view = get_schema_view(
 )
 
 router = DefaultRouter()
-router.register('course', CourseViewSet, basename='course')
+router.register('course', v.CourseViewSet, basename='course')
+router.register('lecture', v.LectureViewSet, basename='lecture')
+router.register('homework', v.HomeWorkViewSet, basename='homework')
+router.register('homework_done', v.HomeWorkDoneViewSet, basename='homework_done')
+router.register('mark', v.MarkViewSet, basename='mark')
+router.register('comment', v.CommentViewSet, basename='comment')
 
 urlpatterns = [
     path(r'', include(router.urls)),

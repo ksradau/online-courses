@@ -25,10 +25,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "rest_framework",
-    "rest_framework.authtoken",
-    "drf_yasg",
-    "api",
+    'rest_framework',
+    'rest_framework.authtoken',
+    'drf_yasg',
+    'django_filters',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -86,8 +87,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -121,3 +120,10 @@ AWS_S3_ADDRESSING_STYLE = "path"
 AWS_S3_REGION_NAME = _settings.AWS_S3_REGION_NAME
 AWS_SECRET_ACCESS_KEY = _settings.AWS_SECRET_ACCESS_KEY
 AWS_STORAGE_BUCKET_NAME = _settings.AWS_STORAGE_BUCKET_NAME
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'
+    ]
+}
