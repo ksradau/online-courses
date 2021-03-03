@@ -18,11 +18,10 @@ schema_view = get_schema_view(
 )
 
 router = DefaultRouter()
-router.register('', CourseViewSet, basename='')
+router.register('course', CourseViewSet, basename='course')
 
 urlpatterns = [
-    path('course/', include(router.urls)),
-    path('course/<int:pk>/', include(router.urls)),
+    path(r'', include(router.urls)),
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
         schema_view.without_ui(cache_timeout=0),

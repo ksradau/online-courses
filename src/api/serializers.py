@@ -14,18 +14,17 @@ class UserSerializer(s.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['url', 'username', 'email', 'is_staff', 'groups']
+        fields = ['first_name', 'last_name', 'groups']
 
 
 class CourseSerializer(s.ModelSerializer):
-    # teachers = UserSerializer(many=True)
-    # students = UserSerializer(many=True)
+    user = UserSerializer(many=True)
 
     class Meta:
         model = Course
-        fields = ['title',
-                  # 'teachers',
-                  # 'students',
+        fields = ['id',
+                  'title',
+                  'user',
                   ]
 
 
