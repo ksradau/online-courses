@@ -27,6 +27,7 @@ router.register('comment', v.CommentViewSet, basename='comment')
 
 urlpatterns = [
     path(r'', include(router.urls)),
+    path('register/', v.CreateUserView.as_view(), name='registration'),
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
         schema_view.without_ui(cache_timeout=0),
