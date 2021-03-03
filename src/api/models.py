@@ -32,7 +32,7 @@ class HomeWork(m.Model):
 
 class HomeWorkDone(m.Model):
     solution = m.TextField()
-    homework = m.OneToOneField(HomeWork, on_delete=m.CASCADE, related_name="homework_done")
+    homework = m.ForeignKey(HomeWork, on_delete=m.CASCADE, related_name="homework_done")
     student = m.ForeignKey(User, on_delete=m.CASCADE, related_name="student_homework_done")
 
     def __str__(self):
@@ -56,3 +56,6 @@ class Comment(m.Model):
 
     def __str__(self):
         return f"Comment for the { self.mark }"
+
+
+User.add_to_class("__str__", lambda self: f'{self.groups.first()} {self.first_name} {self.last_name}')

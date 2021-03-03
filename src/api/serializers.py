@@ -18,8 +18,6 @@ class UserSerializer(s.ModelSerializer):
 
 
 class CourseSerializer(s.ModelSerializer):
-    user = UserSerializer(many=True, read_only=True)
-
     class Meta:
         model = Course
         fields = ['id',
