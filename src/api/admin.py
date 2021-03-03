@@ -3,7 +3,7 @@ from api.models import Course, Lecture, HomeWork, HomeWorkDone, Mark, Comment
 
 
 @admin.register(Course)
-class CouseAdmin(admin.ModelAdmin):
+class CourseAdmin(admin.ModelAdmin):
     pass
 
 

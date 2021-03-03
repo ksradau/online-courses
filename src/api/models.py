@@ -33,7 +33,7 @@ class HomeWork(m.Model):
 class HomeWorkDone(m.Model):
     solution = m.TextField()
     homework = m.OneToOneField(HomeWork, on_delete=m.CASCADE, related_name="homework_done")
-    user = m.ForeignKey(User, on_delete=m.CASCADE, related_name="user_homework_done")
+    student = m.ForeignKey(User, on_delete=m.CASCADE, related_name="student_homework_done")
 
     def __str__(self):
         return f"Solution for the { self.homework }"
@@ -43,7 +43,7 @@ class Mark(m.Model):
     value = m.PositiveSmallIntegerField(validators=(MinValueValidator(limit_value=1),
                                                     MaxValueValidator(limit_value=10)))
     homework_done = m.OneToOneField(HomeWorkDone, on_delete=m.CASCADE, related_name="mark")
-    user = m.ForeignKey(User, on_delete=m.PROTECT, related_name="user_mark")
+    teacher = m.ForeignKey(User, on_delete=m.PROTECT, related_name="teacher_mark")
 
     def __str__(self):
         return f"Mark: { self.value }"
@@ -52,7 +52,7 @@ class Mark(m.Model):
 class Comment(m.Model):
     text = m.TextField()
     mark = m.ForeignKey(Mark, on_delete=m.CASCADE, related_name="comment")
-    user = m.ForeignKey(User, on_delete=m.PROTECT, related_name="user_comment")
+    teacher = m.ForeignKey(User, on_delete=m.PROTECT, related_name="teacher_comment")
 
     def __str__(self):
         return f"Comment for the { self.mark }"
