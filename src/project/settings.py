@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "drf_yasg",
+    "api",
 ]
 
 MIDDLEWARE = [
@@ -107,6 +108,7 @@ STATIC_ROOT = (
     REPO_DIR / ".static"
 )
 STATIC_URL = "/static/"
+MEDIA_URL = "/media/"
 
 
 SITE_ID = _settings.SITE_ID
