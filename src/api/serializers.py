@@ -1,7 +1,11 @@
 from rest_framework import serializers as s
 from rest_framework import fields as f
 from api.models import Course, Lecture, HomeWork, HomeWorkDone, Mark, Comment
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 
 class GroupSerializer(s.ModelSerializer):
@@ -13,7 +17,7 @@ class GroupSerializer(s.ModelSerializer):
         }
 
 
-class UserSerializer(s.ModelSerializer):
+class UserCreateSerializer(s.ModelSerializer):
     group = s.PrimaryKeyRelatedField(queryset=Group.objects.all(), write_only=True)
     password = f.CharField(write_only=True)
     confirm_password = f.CharField(write_only=True)
@@ -40,12 +44,14 @@ class UserSerializer(s.ModelSerializer):
         fields = ['id', 'username', 'password', 'confirm_password', 'group']
 
 
-class CourseSerializer(s.ModelSerializer):
+class UserSerializer(s.ModelSerializer):
+    groups = GroupSerializer(many=True)
+
     class Meta:
-        model = Course
+        model = User
         fields = ['id',
-                  'title',
-                  'user',
+                  'groups',
+                  'username',
                   ]
 
 
@@ -53,6 +59,23 @@ class LectureSerializer(s.ModelSerializer):
     class Meta:
         model = Lecture
         fields = ['number', 'topic', 'presentation', 'course']
+
+
+class CourseSerializer(s.ModelSerializer):
+    creator = UserSerializer()
+    students = UserSerializer(many=True)
+    teachers = UserSerializer(many=True)
+    lecture = LectureSerializer(many=True)
+
+    class Meta:
+        model = Course
+        fields = ['id',
+                  'title',
+                  'creator',
+                  'students',
+                  'teachers',
+                  'lecture',
+                  ]
 
 
 class HomeWorkSerializer(s.ModelSerializer):

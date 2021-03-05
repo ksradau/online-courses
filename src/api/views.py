@@ -4,14 +4,16 @@ from rest_framework import generics as g
 from rest_framework import mixins as m
 from api.models import Course, Lecture, HomeWork, HomeWorkDone, Mark, Comment
 from api.serializers import CourseSerializer, LectureSerializer, HomeWorkSerializer, HomeWorkDoneSerializer, \
-    MarkSerializer, CommentSerializer, UserSerializer
+    MarkSerializer, CommentSerializer, UserCreateSerializer
 from rest_framework.views import APIView
 from rest_framework import status
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import permissions
-from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 
 class CourseViewSet(vs.ModelViewSet):
@@ -21,7 +23,9 @@ class CourseViewSet(vs.ModelViewSet):
 
 class LectureViewSet(vs.ModelViewSet):
     serializer_class = LectureSerializer
-    queryset = Lecture.objects.all()
+
+    def get_queryset(self):
+        return Lecture.objects.filter(course=self.kwargs['courses_pk'])
 
 
 class HomeWorkViewSet(vs.ModelViewSet):
@@ -58,8 +62,8 @@ class Register(APIView):
 
 
 class CreateUserView(g.CreateAPIView):
-    model = get_user_model()
+    model = User
     permission_classes = [
         permissions.AllowAny
     ]
-    serializer_class = UserSerializer
+    serializer_class = UserCreateSerializer

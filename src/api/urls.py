@@ -4,6 +4,14 @@ from api import views as v
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_nested import routers
+
+
+router = routers.SimpleRouter()
+router.register('courses', v.CourseViewSet, basename='courses')
+
+course_router = routers.NestedSimpleRouter(router, 'courses', lookup='courses')
+course_router.register('lectures', v.LectureViewSet, basename='lectures')
 
 
 schema_view = get_schema_view(
@@ -18,8 +26,8 @@ schema_view = get_schema_view(
 )
 
 router = DefaultRouter()
-router.register('course', v.CourseViewSet, basename='course')
-router.register('lecture', v.LectureViewSet, basename='lecture')
+# router.register('courses', v.CourseViewSet, basename='courses')
+# router.register('lecture', v.LectureViewSet, basename='lecture')
 router.register('homework', v.HomeWorkViewSet, basename='homework')
 router.register('homework_done', v.HomeWorkDoneViewSet, basename='homework_done')
 router.register('mark', v.MarkViewSet, basename='mark')
@@ -27,6 +35,7 @@ router.register('comment', v.CommentViewSet, basename='comment')
 
 urlpatterns = [
     path(r'', include(router.urls)),
+    path(r'', include(course_router.urls)),
     path('register/', v.CreateUserView.as_view(), name='registration'),
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
