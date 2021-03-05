@@ -1,4 +1,6 @@
-from rest_framework import viewsets as v
+from rest_framework import viewsets as vs
+from rest_framework import views as v
+from rest_framework import generics as g
 from rest_framework import mixins as m
 from api.models import Course, Lecture, HomeWork, HomeWorkDone, Mark, Comment
 from api.serializers import CourseSerializer, LectureSerializer, HomeWorkSerializer, HomeWorkDoneSerializer, \
@@ -9,36 +11,35 @@ from django.contrib.auth.models import User
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import permissions
-from rest_framework.generics import CreateAPIView
 from django.contrib.auth import get_user_model
 
 
-class CourseViewSet(v.ModelViewSet):
+class CourseViewSet(vs.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
 
 
-class LectureViewSet(v.ModelViewSet):
+class LectureViewSet(vs.ModelViewSet):
     serializer_class = LectureSerializer
     queryset = Lecture.objects.all()
 
 
-class HomeWorkViewSet(v.ModelViewSet):
+class HomeWorkViewSet(vs.ModelViewSet):
     serializer_class = HomeWorkSerializer
     queryset = HomeWork.objects.all()
 
 
-class HomeWorkDoneViewSet(v.ModelViewSet):
+class HomeWorkDoneViewSet(vs.ModelViewSet):
     serializer_class = HomeWorkDoneSerializer
     queryset = HomeWorkDone.objects.all()
 
 
-class MarkViewSet(v.ModelViewSet):
+class MarkViewSet(vs.ModelViewSet):
     serializer_class = MarkSerializer
     queryset = Mark.objects.all()
 
 
-class CommentViewSet(v.ModelViewSet):
+class CommentViewSet(vs.ModelViewSet):
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
 
@@ -56,7 +57,7 @@ class Register(APIView):
         return Response({"status": "success", "response": "User Successfully Created"}, status=status.HTTP_201_CREATED)
 
 
-class CreateUserView(CreateAPIView):
+class CreateUserView(g.CreateAPIView):
     model = get_user_model()
     permission_classes = [
         permissions.AllowAny
