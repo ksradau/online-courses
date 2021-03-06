@@ -11,6 +11,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import permissions
+from django.db.models import Q
 
 
 User = get_user_model()
@@ -18,14 +19,23 @@ User = get_user_model()
 
 class CourseViewSet(vs.ModelViewSet):
     serializer_class = CourseSerializer
-    queryset = Course.objects.all()
+
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
+
+    def get_queryset(self):
+        return Course.objects.filter(Q(creator=self.request.user)
+                                     | Q(teachers=self.request.user)
+                                     | Q(students=self.request.user)
+                                     ).distinct()
 
 
 class LectureViewSet(vs.ModelViewSet):
     serializer_class = LectureSerializer
+    queryset = Lecture.objects.all()
 
-    def get_queryset(self):
-        return Lecture.objects.filter(course=self.kwargs['courses_pk'])
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
 
 
 class HomeWorkViewSet(vs.ModelViewSet):
@@ -37,28 +47,24 @@ class HomeWorkDoneViewSet(vs.ModelViewSet):
     serializer_class = HomeWorkDoneSerializer
     queryset = HomeWorkDone.objects.all()
 
+    def perform_create(self, serializer):
+        serializer.save(student=self.request.user)
+
 
 class MarkViewSet(vs.ModelViewSet):
     serializer_class = MarkSerializer
     queryset = Mark.objects.all()
+
+    def perform_create(self, serializer):
+        serializer.save(teacher=self.request.user)
 
 
 class CommentViewSet(vs.ModelViewSet):
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
 
-
-class Register(APIView):
-    def post(self, request):
-        user = User.objects.create(
-                username=request.data.get('username'),
-                email=request.data.get('email'),
-                first_name=request.data.get('firstName'),
-                last_name=request.data.get('lastName')
-            )
-        user.set_password(str(request.data.get('password')))
-        user.save()
-        return Response({"status": "success", "response": "User Successfully Created"}, status=status.HTTP_201_CREATED)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class CreateUserView(g.CreateAPIView):

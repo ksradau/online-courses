@@ -45,36 +45,38 @@ class UserCreateSerializer(s.ModelSerializer):
 
 
 class UserSerializer(s.ModelSerializer):
-    groups = GroupSerializer(many=True)
-
     class Meta:
         model = User
-        fields = ['id',
-                  'groups',
-                  'username',
-                  ]
+        fields = ['id', 'username']
 
 
 class LectureSerializer(s.ModelSerializer):
     class Meta:
         model = Lecture
-        fields = ['number', 'topic', 'presentation', 'course']
+        fields = ['id', 'number', 'topic', 'presentation', 'course']
+
+
+class RelatedUserSerializer(s.PrimaryKeyRelatedField, s.ModelSerializer):
+    class Meta:
+        model = User
 
 
 class CourseSerializer(s.ModelSerializer):
-    creator = UserSerializer()
-    students = UserSerializer(many=True)
-    teachers = UserSerializer(many=True)
-    lecture = LectureSerializer(many=True)
+    teachers = RelatedUserSerializer(many=True, required=False,
+                                     queryset=User.objects.filter(groups__name__in=['Teacher']))
+    lecture = LectureSerializer(many=True, read_only=True)
+    students = RelatedUserSerializer(many=True, required=False,
+                                     queryset=User.objects.filter(groups__name__in=['Student']))
+    creator = UserSerializer(read_only=True)
 
     class Meta:
         model = Course
         fields = ['id',
                   'title',
-                  'creator',
                   'students',
                   'teachers',
                   'lecture',
+                  'creator',
                   ]
 
 
@@ -87,7 +89,12 @@ class HomeWorkSerializer(s.ModelSerializer):
 class HomeWorkDoneSerializer(s.ModelSerializer):
     class Meta:
         model = HomeWorkDone
-        fields = ['solution', 'homework', 'student']
+        fields = ['solution', 'homework']
+
+    def validate(self, data):
+        if HomeWorkDone.objects.filter(homework=data.get('homework'), student=self.context['request'].user):
+            raise s.ValidationError("Sorry, you had already send your homework on this task.")
+        return data
 
 
 class MarkSerializer(s.ModelSerializer):
@@ -99,4 +106,4 @@ class MarkSerializer(s.ModelSerializer):
 class CommentSerializer(s.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ['text', 'mark', 'teacher']
+        fields = ['text', 'mark', 'user']

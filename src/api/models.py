@@ -64,4 +64,4 @@ class Comment(m.Model):
         return f"Comment for the { self.mark }"
 
 
-User.add_to_class("__str__", lambda self: f'{self.groups.first()} {self.first_name} {self.last_name}')
+User.add_to_class("__str__", lambda self: f'{self.groups.first()}: {self.username}')
