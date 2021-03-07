@@ -4,7 +4,10 @@ from rest_framework import generics as g
 from rest_framework import mixins as m
 from api.models import Course, Lecture, HomeWork, HomeWorkDone, Mark, Comment
 from api.serializers import CourseSerializer, LectureSerializer, HomeWorkSerializer, HomeWorkDoneSerializer, \
-    MarkSerializer, CommentSerializer, UserCreateSerializer
+    MarkSerializer, CommentSerializer, UserCreateSerializer, LecturePutSerializer
+from api.permissions import CoursePermission, LecturePermission, HomeWorkPermission, HomeWorkDonePermission, \
+    MarkPermission, CommentPermission
+from rest_framework import permissions as p
 from rest_framework.views import APIView
 from rest_framework import status
 from django.contrib.auth import get_user_model
@@ -19,6 +22,7 @@ User = get_user_model()
 
 class CourseViewSet(vs.ModelViewSet):
     serializer_class = CourseSerializer
+    permission_classes = [p.IsAuthenticated, CoursePermission]
 
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
@@ -32,39 +36,71 @@ class CourseViewSet(vs.ModelViewSet):
 
 class LectureViewSet(vs.ModelViewSet):
     serializer_class = LectureSerializer
-    queryset = Lecture.objects.all()
+    permission_classes = [LecturePermission]
+
+    def get_queryset(self):
+        return Lecture.objects.filter(Q(course__creator=self.request.user)
+                                     | Q(course__teachers=self.request.user)
+                                     | Q(course__students=self.request.user)
+                                     ).distinct()
 
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
 
+    def get_serializer_class(self):
+        serializer_class = self.serializer_class
+        if self.request.method == 'PUT':
+            serializer_class = LecturePutSerializer
+        return serializer_class
+
 
 class HomeWorkViewSet(vs.ModelViewSet):
     serializer_class = HomeWorkSerializer
-    queryset = HomeWork.objects.all()
+
+    def get_queryset(self):
+        return HomeWork.objects.filter(Q(lecture__course__creator=self.request.user)
+                                     | Q(lecture__course__teachers=self.request.user)
+                                     | Q(lecture__course__students=self.request.user)
+                                     ).distinct()
 
 
 class HomeWorkDoneViewSet(vs.ModelViewSet):
     serializer_class = HomeWorkDoneSerializer
-    queryset = HomeWorkDone.objects.all()
 
     def perform_create(self, serializer):
         serializer.save(student=self.request.user)
 
+    def get_queryset(self):
+        return HomeWorkDone.objects.filter(Q(homework__lecture__course__creator=self.request.user)
+                                     | Q(homework__lecture__creator=self.request.user)
+                                     # | Q(homework__lecture__course__students=self.request.user)
+                                     | Q(student=self.request.user)
+                                     ).distinct()
+
 
 class MarkViewSet(vs.ModelViewSet):
     serializer_class = MarkSerializer
-    queryset = Mark.objects.all()
 
     def perform_create(self, serializer):
         serializer.save(teacher=self.request.user)
 
+    def get_queryset(self):
+        return Mark.objects.filter(Q(homework_done__homework__lecture__course__creator=self.request.user)
+                                     | Q(homework_done__homework__lecture__creator=self.request.user)
+                                     | Q(homework_done__student=self.request.user)
+                                     ).distinct()
+
 
 class CommentViewSet(vs.ModelViewSet):
     serializer_class = CommentSerializer
-    queryset = Comment.objects.all()
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    def get_queryset(self):
+        return Comment.objects.filter(Q(mark__teacher=self.request.user)
+                                     | Q(mark__homework_done__student=self.request.user)
+                                     ).distinct()
 
 
 class CreateUserView(g.CreateAPIView):
@@ -73,3 +109,7 @@ class CreateUserView(g.CreateAPIView):
         permissions.AllowAny
     ]
     serializer_class = UserCreateSerializer
+
+
+class AuthorizationView(g.GenericAPIView):
+    pass

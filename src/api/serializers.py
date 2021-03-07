@@ -56,6 +56,12 @@ class LectureSerializer(s.ModelSerializer):
         fields = ['id', 'number', 'topic', 'presentation', 'course']
 
 
+class LecturePutSerializer(s.ModelSerializer):
+    class Meta:
+        model = Lecture
+        fields = ['id', 'number', 'topic', 'presentation']
+
+
 class RelatedUserSerializer(s.PrimaryKeyRelatedField, s.ModelSerializer):
     class Meta:
         model = User
@@ -63,10 +69,10 @@ class RelatedUserSerializer(s.PrimaryKeyRelatedField, s.ModelSerializer):
 
 class CourseSerializer(s.ModelSerializer):
     teachers = RelatedUserSerializer(many=True, required=False,
-                                     queryset=User.objects.filter(groups__name__in=['Teacher']))
+                                     queryset=User.objects.filter(groups__name='Teacher'))
     lecture = LectureSerializer(many=True, read_only=True)
     students = RelatedUserSerializer(many=True, required=False,
-                                     queryset=User.objects.filter(groups__name__in=['Student']))
+                                     queryset=User.objects.filter(groups__name='Student'))
     creator = UserSerializer(read_only=True)
 
     class Meta:
@@ -81,15 +87,19 @@ class CourseSerializer(s.ModelSerializer):
 
 
 class HomeWorkSerializer(s.ModelSerializer):
+    lecture = s.PrimaryKeyRelatedField(queryset=Lecture.objects.all())
+
     class Meta:
         model = HomeWork
-        fields = ['task', 'description', 'lecture']
+        fields = ['id', 'task', 'description', 'lecture']
 
 
 class HomeWorkDoneSerializer(s.ModelSerializer):
+    homework = HomeWorkSerializer(read_only=True)
+
     class Meta:
         model = HomeWorkDone
-        fields = ['solution', 'homework']
+        fields = ['id', 'solution', 'homework']
 
     def validate(self, data):
         if HomeWorkDone.objects.filter(homework=data.get('homework'), student=self.context['request'].user):
@@ -98,12 +108,16 @@ class HomeWorkDoneSerializer(s.ModelSerializer):
 
 
 class MarkSerializer(s.ModelSerializer):
+    homework_done = HomeWorkDoneSerializer(read_only=True)
+
     class Meta:
         model = Mark
-        fields = ['value', 'homework_done', 'teacher']
+        fields = ['id', 'value', 'homework_done']
 
 
 class CommentSerializer(s.ModelSerializer):
+    mark = MarkSerializer(read_only=True)
+
     class Meta:
         model = Comment
-        fields = ['text', 'mark', 'user']
+        fields = ['id', 'text', 'mark']
