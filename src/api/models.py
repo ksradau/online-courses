@@ -42,7 +42,7 @@ class HomeWorkDone(m.Model):
     student = m.ForeignKey(User, on_delete=m.CASCADE, related_name="student_homework_done")
 
     def __str__(self):
-        return f"Solution for the { self.homework }"
+        return f"Solution for the { self.homework } by { self.student }"
 
 
 class Mark(m.Model):
