@@ -1,6 +1,8 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models as m
 from django.contrib.auth import get_user_model
+import uuid
+from storages.backends.s3boto3 import S3Boto3Storage
 
 
 User = get_user_model()
@@ -19,7 +21,7 @@ class Course(m.Model):
 class Lecture(m.Model):
     number = m.PositiveIntegerField()
     topic = m.CharField(max_length=255)
-    presentation = m.FileField(upload_to='presentations/')
+    presentation = m.FileField(storage=S3Boto3Storage())
     course = m.ForeignKey(Course, on_delete=m.CASCADE, related_name="lecture")
     creator = m.ForeignKey(User, on_delete=m.CASCADE, related_name="lecture_creator")
 

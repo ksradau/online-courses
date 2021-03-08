@@ -36,7 +36,7 @@ class CourseViewSet(vs.ModelViewSet):
 
 class LectureViewSet(vs.ModelViewSet):
     serializer_class = LectureSerializer
-    permission_classes = [LecturePermission]
+    permission_classes = [p.IsAuthenticated, LecturePermission]
 
     def get_queryset(self):
         return Lecture.objects.filter(Q(course__creator=self.request.user)

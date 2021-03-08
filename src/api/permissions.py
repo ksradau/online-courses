@@ -32,7 +32,7 @@ class LecturePermission(p.BasePermission):
             try:
                 course = Course.objects.filter(id=request.data.get('course')).first()
                 return is_teacher(request.user) and \
-                        course.creator == request.user or request.user in course.teachers.all()
+                       (course.creator == request.user or request.user in course.teachers.all())
             except AttributeError:
                 return True
         else:
