@@ -129,7 +129,8 @@ class MarkPutSerializer(s.ModelSerializer):
 
 class CommentSerializer(s.ModelSerializer):
     mark = s.PrimaryKeyRelatedField(queryset=Mark.objects.all())
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = Comment
-        fields = ['id', 'text', 'mark']
+        fields = ['id', 'text', 'mark', 'user']

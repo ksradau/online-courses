@@ -10,7 +10,7 @@ class Course(m.Model):
     title = m.CharField(max_length=100)
     teachers = m.ManyToManyField(User, related_name="course_teachers")
     students = m.ManyToManyField(User, related_name="course_students")
-    creator = m.ForeignKey(User, on_delete=m.DO_NOTHING, related_name="creator")
+    creator = m.ForeignKey(User, on_delete=m.CASCADE, related_name="creator")
 
     def __str__(self):
         return f"Course '{ self.title }'"
@@ -21,7 +21,7 @@ class Lecture(m.Model):
     topic = m.CharField(max_length=255)
     presentation = m.FileField(upload_to='presentations/')
     course = m.ForeignKey(Course, on_delete=m.CASCADE, related_name="lecture")
-    creator = m.ForeignKey(User, on_delete=m.DO_NOTHING, related_name="lecture_creator")
+    creator = m.ForeignKey(User, on_delete=m.CASCADE, related_name="lecture_creator")
 
     def __str__(self):
         return f"Lecture №{ self.number } - '{ self.topic }'"
@@ -38,7 +38,7 @@ class HomeWork(m.Model):
 
 class HomeWorkDone(m.Model):
     solution = m.TextField()
-    homework = m.ForeignKey(HomeWork, on_delete=m.CASCADE, related_name="homework_done")
+    homework = m.ForeignKey(HomeWork, on_delete=m.DO_NOTHING, related_name="homework_done")
     student = m.ForeignKey(User, on_delete=m.CASCADE, related_name="student_homework_done")
 
     def __str__(self):
