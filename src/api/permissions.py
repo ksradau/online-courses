@@ -45,15 +45,63 @@ class LecturePermission(p.BasePermission):
 
 
 class HomeWorkPermission(p.BasePermission):
-    pass
+    message = 'This request is permitted.'
+
+    def has_permission(self, request, view):
+        if request.method in p.SAFE_METHODS:
+            return True
+        elif request.method == "POST":
+            try:
+                lecture = Lecture.objects.filter(id=request.data.get('lecture')).first()
+                return is_teacher(request.user) and \
+                  lecture.creator == request.user
+            except AttributeError:
+                return True
+        else:
+            return is_teacher(request.user)
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in p.SAFE_METHODS:
+            return True
+        return obj.lecture.creator == request.user
 
 
 class HomeWorkDonePermission(p.BasePermission):
-    pass
+    message = 'This request is permitted.'
+
+    def has_permission(self, request, view):
+        if request.method in p.SAFE_METHODS:
+            return True
+        elif request.method == "POST":
+            try:
+                homework = HomeWork.objects.filter(id=request.data.get('homework')).first()
+                return is_student(request.user) and \
+                  request.user in homework.lecture.course.students.all()
+            except AttributeError:
+                return True
+        else:
+            return is_student(request.user)
 
 
 class MarkPermission(p.BasePermission):
-    pass
+    message = 'This request is permitted.'
+
+    def has_permission(self, request, view):
+        if request.method in p.SAFE_METHODS:
+            return True
+        elif request.method == "POST":
+            try:
+                homework_done = HomeWorkDone.objects.filter(id=request.data.get('homework_done')).first()
+                return is_teacher(request.user) and homework_done.homework.lecture.creator == request.user
+            except AttributeError:
+                return True
+        else:
+            return is_teacher(request.user)
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in p.SAFE_METHODS:
+            return True
+        return obj.homework_done.homework.lecture.creator == request.user
 
 
 class CommentPermission(p.BasePermission):
