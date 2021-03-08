@@ -105,7 +105,20 @@ class MarkPermission(p.BasePermission):
 
 
 class CommentPermission(p.BasePermission):
-    pass
+    message = 'This request is permitted.'
+
+    def has_permission(self, request, view):
+        if request.method in p.SAFE_METHODS:
+            return True
+        elif request.method == "POST":
+            try:
+                mark = Mark.objects.filter(id=request.data.get('mark')).first()
+                return (is_student(request.user) and mark.homework_done.student == request.user) or \
+                       (is_teacher(request.user) and mark.teacher == request.user)
+            except AttributeError:
+                return True
+        else:
+            return True
 
 
 def is_student(user):

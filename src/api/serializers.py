@@ -128,7 +128,7 @@ class MarkPutSerializer(s.ModelSerializer):
 
 
 class CommentSerializer(s.ModelSerializer):
-    mark = MarkSerializer(read_only=True)
+    mark = s.PrimaryKeyRelatedField(queryset=Mark.objects.all())
 
     class Meta:
         model = Comment
