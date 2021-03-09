@@ -19,7 +19,7 @@ development:
 heroku:
   AWS_S3_REGION_NAME: "us-east-1"
   ALLOWED_HOSTS:
-    - .online-courses-rest.herokuapp.com
+    - .courses-api-ks.herokuapp.com
     - 127.0.0.1
     - localhost
   DEBUG: false
