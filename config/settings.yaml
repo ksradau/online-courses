@@ -14,6 +14,7 @@ development:
   SECRET_KEY: ""
   DEBUG: true
   SITE_ID: 5
+  DATABASE_URL: ""
 
 heroku:
   AWS_S3_REGION_NAME: "us-east-1"
