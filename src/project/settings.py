@@ -64,7 +64,7 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 
 _db_url = _settings.DATABASE_URL
-if _settings.ENV_FOR_DYNACONF == "heroku":
+if _settings.ENV_FOR_DYNACONF == "production":
     _db_url = getenv("DATABASE_URL")
 
 DATABASES = {

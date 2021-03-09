@@ -15,7 +15,7 @@ development:
   SITE_ID: 5
   DATABASE_URL: ""
 
-heroku:
+production:
   AWS_S3_REGION_NAME: "us-east-1"
   DEBUG: false
   SITE_ID: 5
