@@ -1,5 +1,8 @@
 default:
-  ALLOWED_HOSTS: []
+  ALLOWED_HOSTS: 
+    - .courses-api-ks.herokuapp.com
+    - 127.0.0.1
+    - localhost
   AWS_ACCESS_KEY_ID: ""
   AWS_S3_REGION_NAME: ""
   AWS_SECRET_ACCESS_KEY: ""
@@ -18,10 +21,6 @@ development:
 
 heroku:
   AWS_S3_REGION_NAME: "us-east-1"
-  ALLOWED_HOSTS:
-    - .courses-api-ks.herokuapp.com
-    - 127.0.0.1
-    - localhost
   DEBUG: false
   SITE_ID: 5
   SECRET_KEY: ""
