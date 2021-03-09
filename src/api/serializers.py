@@ -134,3 +134,11 @@ class CommentSerializer(s.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['id', 'text', 'mark', 'user']
+
+
+class UserLoginSerializer(s.ModelSerializer):
+    password = f.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'password']

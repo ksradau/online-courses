@@ -4,14 +4,6 @@ from api import views as v
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework.permissions import IsAuthenticated
-# from rest_framework_nested import routers
-#
-#
-# router = routers.SimpleRouter()
-# router.register('courses', v.CourseViewSet, basename='courses')
-#
-# course_router = routers.NestedSimpleRouter(router, 'courses', lookup='courses')
-# course_router.register('lectures', v.LectureViewSet, basename='lectures')
 
 
 schema_view = get_schema_view(
@@ -35,8 +27,9 @@ router.register('comment', v.CommentViewSet, basename='comment')
 
 urlpatterns = [
     path(r'', include(router.urls)),
-    # path(r'', include(course_router.urls)),
-    path('register/', v.RegisterView.as_view(), name='registration'),
+    path('sign-up/', v.RegisterView.as_view(), name='signup'),
+    path("login/", v.LoginView.as_view(), name="login"),
+    path("logout/", v.LogoutView.as_view(), name="logout"),
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
         schema_view.without_ui(cache_timeout=0),

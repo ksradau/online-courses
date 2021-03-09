@@ -1,7 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models as m
 from django.contrib.auth import get_user_model
-import uuid
 from storages.backends.s3boto3 import S3Boto3Storage
 
 

@@ -1,5 +1,4 @@
 from rest_framework import permissions as p
-from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 from api.models import Course, Lecture, HomeWork, HomeWorkDone, Mark, Comment
 
@@ -119,6 +118,13 @@ class CommentPermission(p.BasePermission):
                 return True
         else:
             return True
+
+
+class IsNotAuthenticated(p.BasePermission):
+    message = 'You must log out for this action.'
+
+    def has_permission(self, request, view):
+        return not request.user.is_authenticated
 
 
 def is_student(user):

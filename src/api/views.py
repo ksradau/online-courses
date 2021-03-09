@@ -1,20 +1,17 @@
 from rest_framework import viewsets as vs
-from rest_framework import views as v
 from rest_framework import generics as g
-from rest_framework import mixins as m
 from api.models import Course, Lecture, HomeWork, HomeWorkDone, Mark, Comment
 from api.serializers import CourseSerializer, LectureSerializer, HomeWorkSerializer, HomeWorkDoneSerializer, \
-    MarkSerializer, CommentSerializer, UserCreateSerializer, LecturePutSerializer, MarkPutSerializer
+    MarkSerializer, CommentSerializer, UserCreateSerializer, LecturePutSerializer, MarkPutSerializer, \
+    UserLoginSerializer
 from api.permissions import CoursePermission, LecturePermission, HomeWorkPermission, HomeWorkDonePermission, \
-    MarkPermission, CommentPermission
+    MarkPermission, CommentPermission, IsNotAuthenticated
 from rest_framework import permissions as p
-from rest_framework.views import APIView
-from rest_framework import status
 from django.contrib.auth import get_user_model
-from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework import permissions
 from django.db.models import Q
+from rest_framework.response import Response
+from rest_framework import views as v
+from django.contrib.auth import authenticate, login, logout
 
 
 User = get_user_model()
@@ -116,9 +113,32 @@ class CommentViewSet(vs.ModelViewSet):
 
 class RegisterView(g.CreateAPIView):
     model = User
-    permission_classes = [p.AllowAny]
+    permission_classes = [IsNotAuthenticated]
     serializer_class = UserCreateSerializer
 
+    def get(self, request):
+        return Response({"detail": "Here you can sign up."})
 
-class AuthorizationView(g.GenericAPIView):
-    pass
+
+class LoginView(v.APIView):
+    model = User
+    permission_classes = [IsNotAuthenticated]
+    serializer_class = UserLoginSerializer
+
+    def get(self, request):
+        return Response({"detail": "Here you can log in."})
+
+    def post(self, request):
+        user = authenticate(username=request.data.get('username'), password=request.data.get('password'))
+        if user is not None:
+            login(request, user)
+            return Response({"detail": "You are logged in!"})
+        return Response({"detail": "Error! Authentication was failed."})
+
+
+class LogoutView(v.APIView):
+    permission_classes = [p.IsAuthenticated]
+
+    def get(self, request):
+        logout(request)
+        return Response({"detail": "You are logged out."})
