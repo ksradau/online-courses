@@ -20,3 +20,4 @@ heroku:
   DEBUG: false
   SITE_ID: 5
   SECRET_KEY: ""
+  DATABASE_URL: ""
