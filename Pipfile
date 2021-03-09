@@ -8,7 +8,7 @@ verify_ssl = true
 [packages]
 django = "*"
 dj-database-url = "*"
-dynaconf = "*"
+dynaconf = {extras = ["yaml"],version = "*"}
 djangorestframework = "*"
 httpie = "*"
 boto3 = "*"
