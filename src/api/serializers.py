@@ -65,6 +65,7 @@ class LecturePutSerializer(s.ModelSerializer):
 class RelatedUserSerializer(s.PrimaryKeyRelatedField, s.ModelSerializer):
     class Meta:
         model = User
+        fields = ['id', 'username']
 
 
 class CourseSerializer(s.ModelSerializer):
@@ -95,7 +96,7 @@ class HomeWorkSerializer(s.ModelSerializer):
 
 
 class HomeWorkDoneSerializer(s.ModelSerializer):
-    homework = HomeWorkSerializer(read_only=True)
+    homework = s.PrimaryKeyRelatedField(queryset=HomeWork.objects.all())
 
     class Meta:
         model = HomeWorkDone
@@ -108,16 +109,36 @@ class HomeWorkDoneSerializer(s.ModelSerializer):
 
 
 class MarkSerializer(s.ModelSerializer):
-    homework_done = HomeWorkDoneSerializer(read_only=True)
+    homework_done = s.PrimaryKeyRelatedField(queryset=HomeWorkDone.objects.all())
 
     class Meta:
         model = Mark
         fields = ['id', 'value', 'homework_done']
 
+    def validate(self, data):
+        if Mark.objects.filter(homework_done=data.get('homework_done')):
+            raise s.ValidationError("You had already evaluate this homework. Make PUT request to change the mark.")
+        return data
+
+
+class MarkPutSerializer(s.ModelSerializer):
+    class Meta:
+        model = Mark
+        fields = ['id', 'value']
+
 
 class CommentSerializer(s.ModelSerializer):
-    mark = MarkSerializer(read_only=True)
+    mark = s.PrimaryKeyRelatedField(queryset=Mark.objects.all())
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = Comment
-        fields = ['id', 'text', 'mark']
+        fields = ['id', 'text', 'mark', 'user']
+
+
+class UserLoginSerializer(s.ModelSerializer):
+    password = f.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'password']
