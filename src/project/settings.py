@@ -16,7 +16,7 @@ SECRET_KEY = _settings.SECRET_KEY
 DEBUG = _settings.DEBUG
 
 
-ALLOWED_HOSTS = _settings.ALLOWED_HOSTS + ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".courses-api-ks.herokuapp.com"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
