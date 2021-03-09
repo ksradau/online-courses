@@ -18,6 +18,7 @@ psycopg2 = "*"
 markdown = "*"
 django-filter = "*"
 drf-nested-routers = "*"
+whitenoise = "*"
 
 [requires]
 python_version = "3.9"
