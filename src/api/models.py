@@ -1,5 +1,5 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db import models as m
+from django.db import models
 from django.contrib.auth import get_user_model
 from storages.backends.s3boto3 import S3Boto3Storage
 
@@ -7,59 +7,59 @@ from storages.backends.s3boto3 import S3Boto3Storage
 User = get_user_model()
 
 
-class Course(m.Model):
-    title = m.CharField(max_length=100)
-    teachers = m.ManyToManyField(User, related_name="course_teachers")
-    students = m.ManyToManyField(User, related_name="course_students")
-    creator = m.ForeignKey(User, on_delete=m.CASCADE, related_name="creator")
+class Course(models.Model):
+    title = models.CharField(max_length=100)
+    teachers = models.ManyToManyField(User, related_name="course_teachers")
+    students = models.ManyToManyField(User, related_name="course_students")
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="creator")
 
     def __str__(self):
         return f"Course '{ self.title }'"
 
 
-class Lecture(m.Model):
-    number = m.PositiveIntegerField()
-    topic = m.CharField(max_length=255)
-    presentation = m.FileField(storage=S3Boto3Storage())
-    course = m.ForeignKey(Course, on_delete=m.CASCADE, related_name="lecture")
-    creator = m.ForeignKey(User, on_delete=m.CASCADE, related_name="lecture_creator")
+class Lecture(models.Model):
+    number = models.PositiveIntegerField()
+    topic = models.CharField(max_length=255)
+    presentation = models.FileField(storage=S3Boto3Storage())
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="lecture")
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="lecture_creator")
 
     def __str__(self):
         return f"Lecture №{ self.number } - '{ self.topic }'"
 
 
-class HomeWork(m.Model):
-    task = m.CharField(max_length=255)
-    description = m.TextField()
-    lecture = m.ForeignKey(Lecture, on_delete=m.CASCADE, related_name="homework")
+class HomeWork(models.Model):
+    task = models.CharField(max_length=255)
+    description = models.TextField()
+    lecture = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name="homework")
 
     def __str__(self):
         return f"Task '{ self.task }'"
 
 
-class HomeWorkDone(m.Model):
-    solution = m.TextField()
-    homework = m.ForeignKey(HomeWork, on_delete=m.DO_NOTHING, related_name="homework_done")
-    student = m.ForeignKey(User, on_delete=m.CASCADE, related_name="student_homework_done")
+class HomeWorkDone(models.Model):
+    solution = models.TextField()
+    homework = models.ForeignKey(HomeWork, on_delete=models.DO_NOTHING, related_name="homework_done")
+    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name="student_homework_done")
 
     def __str__(self):
         return f"Solution for the { self.homework } by { self.student }"
 
 
-class Mark(m.Model):
-    value = m.PositiveSmallIntegerField(validators=(MinValueValidator(limit_value=1),
-                                                    MaxValueValidator(limit_value=10)))
-    homework_done = m.OneToOneField(HomeWorkDone, on_delete=m.CASCADE, related_name="mark")
-    teacher = m.ForeignKey(User, on_delete=m.DO_NOTHING, related_name="teacher_mark")
+class Mark(models.Model):
+    value = models.PositiveSmallIntegerField(validators=(MinValueValidator(limit_value=1),
+                                                         MaxValueValidator(limit_value=10)))
+    homework_done = models.OneToOneField(HomeWorkDone, on_delete=models.CASCADE, related_name="mark")
+    teacher = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name="teacher_mark")
 
     def __str__(self):
         return f"Mark: { self.value }"
 
 
-class Comment(m.Model):
-    text = m.TextField()
-    mark = m.ForeignKey(Mark, on_delete=m.CASCADE, related_name="comment")
-    user = m.ForeignKey(User, on_delete=m.DO_NOTHING, related_name="user_comment")
+class Comment(models.Model):
+    text = models.TextField()
+    mark = models.ForeignKey(Mark, on_delete=models.CASCADE, related_name="comment")
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name="user_comment")
 
     def __str__(self):
         return f"Comment for the { self.mark }"
