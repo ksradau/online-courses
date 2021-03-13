@@ -21,9 +21,6 @@ class CourseViewSet(vs.ModelViewSet):
     serializer_class = CourseSerializer
     permission_classes = [p.IsAuthenticated, CoursePermission]
 
-    def perform_create(self, serializer):
-        serializer.save(creator=self.request.user)
-
     def get_queryset(self):
         return Course.objects.filter(Q(creator=self.request.user)
                                      | Q(teachers=self.request.user)
@@ -40,9 +37,6 @@ class LectureViewSet(vs.ModelViewSet):
                                      | Q(course__teachers=self.request.user)
                                      | Q(course__students=self.request.user)
                                      ).distinct()
-
-    def perform_create(self, serializer):
-        serializer.save(creator=self.request.user)
 
     def get_serializer_class(self):
         serializer_class = self.serializer_class
@@ -69,9 +63,6 @@ class HomeWorkDoneViewSet(vs.ModelViewSet):
     permission_classes = [p.IsAuthenticated, HomeWorkDonePermission]
     http_method_names = ['get', 'post', 'head', 'options']
 
-    def perform_create(self, serializer):
-        serializer.save(student=self.request.user)
-
     def get_queryset(self):
         return HomeWorkDone.objects.filter(Q(homework__lecture__creator=self.request.user)
                                      | Q(student=self.request.user)
@@ -82,9 +73,6 @@ class MarkViewSet(vs.ModelViewSet):
     serializer_class = MarkSerializer
     permission_classes = [p.IsAuthenticated, MarkPermission]
     http_method_names = ['get', 'post', 'head', 'options', 'put', 'patch']
-
-    def perform_create(self, serializer):
-        serializer.save(teacher=self.request.user)
 
     def get_queryset(self):
         return Mark.objects.filter(Q(homework_done__homework__lecture__creator=self.request.user) |
@@ -101,9 +89,6 @@ class CommentViewSet(vs.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [p.IsAuthenticated, CommentPermission]
     http_method_names = ['get', 'post', 'head', 'options']
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
 
     def get_queryset(self):
         return Comment.objects.filter(Q(mark__teacher=self.request.user)

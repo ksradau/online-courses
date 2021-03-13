@@ -1,6 +1,5 @@
 from os import getenv
 from pathlib import Path
-
 import dj_database_url
 from dynaconf import settings as _settings
 
@@ -9,12 +8,9 @@ PROJECT_DIR = Path(__file__).parent.resolve()
 BASE_DIR = PROJECT_DIR.parent.resolve()
 REPO_DIR = BASE_DIR.parent.resolve()
 
-
 SECRET_KEY = _settings.SECRET_KEY
 
-
 DEBUG = _settings.DEBUG
-
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".courses-api-ks.herokuapp.com"]
 
@@ -121,8 +117,6 @@ AWS_S3_ADDRESSING_STYLE = "path"
 AWS_S3_REGION_NAME = _settings.AWS_S3_REGION_NAME
 AWS_SECRET_ACCESS_KEY = _settings.AWS_SECRET_ACCESS_KEY
 AWS_STORAGE_BUCKET_NAME = _settings.AWS_STORAGE_BUCKET_NAME
-
-# ENVVAR_PREFIX_FOR_DYNACONF = "SD"
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],

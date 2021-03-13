@@ -74,7 +74,7 @@ class CourseSerializer(s.ModelSerializer):
     lecture = LectureSerializer(many=True, read_only=True)
     students = RelatedUserSerializer(many=True, required=False,
                                      queryset=User.objects.filter(groups__name='Student'))
-    creator = UserSerializer(read_only=True)
+    creator = s.HiddenField(default=s.CurrentUserDefault())
 
     class Meta:
         model = Course
@@ -97,10 +97,11 @@ class HomeWorkSerializer(s.ModelSerializer):
 
 class HomeWorkDoneSerializer(s.ModelSerializer):
     homework = s.PrimaryKeyRelatedField(queryset=HomeWork.objects.all())
+    student = s.HiddenField(default=s.CurrentUserDefault())
 
     class Meta:
         model = HomeWorkDone
-        fields = ['id', 'solution', 'homework']
+        fields = ['id', 'solution', 'homework', 'student']
 
     def validate(self, data):
         if HomeWorkDone.objects.filter(homework=data.get('homework'), student=self.context['request'].user):
@@ -110,10 +111,11 @@ class HomeWorkDoneSerializer(s.ModelSerializer):
 
 class MarkSerializer(s.ModelSerializer):
     homework_done = s.PrimaryKeyRelatedField(queryset=HomeWorkDone.objects.all())
+    teacher = s.HiddenField(default=s.CurrentUserDefault())
 
     class Meta:
         model = Mark
-        fields = ['id', 'value', 'homework_done']
+        fields = ['id', 'value', 'homework_done', 'teacher']
 
     def validate(self, data):
         if Mark.objects.filter(homework_done=data.get('homework_done')):
@@ -129,7 +131,7 @@ class MarkPutSerializer(s.ModelSerializer):
 
 class CommentSerializer(s.ModelSerializer):
     mark = s.PrimaryKeyRelatedField(queryset=Mark.objects.all())
-    user = UserSerializer(read_only=True)
+    user = s.HiddenField(default=s.CurrentUserDefault())
 
     class Meta:
         model = Comment
