@@ -8,11 +8,10 @@ PROJECT_DIR = Path(__file__).parent.resolve()
 BASE_DIR = PROJECT_DIR.parent.resolve()
 REPO_DIR = BASE_DIR.parent.resolve()
 
-SECRET_KEY = _settings.SECRET_KEY
+SECRET_KEY = '1'
+DEBUG = True
 
-DEBUG = _settings.DEBUG
-
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".courses-api-ks.herokuapp.com"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0", ".courses-api-ks.herokuapp.com"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -60,9 +59,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'project.wsgi.application'
 
 
-_db_url = _settings.DATABASE_URL
-if _settings.ENV_FOR_DYNACONF == "production":
-    _db_url = getenv("DATABASE_URL")
+_db_url = "postgresql://ksradau:123@db:5432/ksradau"
 
 DATABASES = {
     "default": dj_database_url.parse(_db_url, conn_max_age=600),
@@ -106,17 +103,6 @@ STATIC_ROOT = (
 STATIC_URL = "/static/"
 MEDIA_URL = "/media/"
 
-
-SITE_ID = _settings.SITE_ID
-
-
-AWS_ACCESS_KEY_ID = _settings.AWS_ACCESS_KEY_ID
-AWS_DEFAULT_ACL = "public-read"
-AWS_QUERYSTRING_AUTH = False
-AWS_S3_ADDRESSING_STYLE = "path"
-AWS_S3_REGION_NAME = _settings.AWS_S3_REGION_NAME
-AWS_SECRET_ACCESS_KEY = _settings.AWS_SECRET_ACCESS_KEY
-AWS_STORAGE_BUCKET_NAME = _settings.AWS_STORAGE_BUCKET_NAME
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
